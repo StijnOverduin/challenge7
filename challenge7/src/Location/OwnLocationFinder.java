@@ -16,14 +16,14 @@ import Utils.Utils;
 public class OwnLocationFinder implements LocationFinder{
 	
 	private HashMap<String, Position> knownLocations; //Contains the known locations of APs. The long is a MAC address.
-	
+	public static final double RATIO = 0.224;
 	public OwnLocationFinder(){
 		knownLocations = Utils.getKnownLocations(); //Put the known locations in our hashMap
 	}
 
 	@Override
 	public Position locate(MacRssiPair[] data) {
-		printMacs(data); //print all the received data
+		//printMacs(data); //print all the received data
 		return getHighestKnownFromList(data); //return the first known APs location
 	}
 	
@@ -34,10 +34,19 @@ public class OwnLocationFinder implements LocationFinder{
 	 */
 	private Position getHighestKnownFromList(MacRssiPair[] data){
 		Position ret = new Position(0,0);
-		int LowestNr = -100;
+		double distanceB = 0.0;
+		double distanceC = 0.0;
+		double distanceA = 0.0;
 		for(int i=0; i<data.length; i++){
-				if (data[i].getMacAsString().equals("F4:CF:E2:54:E3:30") || data[i].getMacAsString().equals("F4:CF:E2:2C:1B:40") || data[i].getMacAsString().equals("F4:CF:E2:2C:0F:20")) {
-					System.out.println("MAC addr: " + data[i].getMacAsString() + " sterkte: " + data[i].getRssi());
+			if (data[i].getMacAsString().equals("F4:CF:E2:54:E3:30")) {
+				distanceB = (data[i].getRssi() + 54)/RATIO;
+				System.out.println(distanceB);
+			} else if (data[i].getMacAsString().equals("F4:CF:E2:2C:1B:40")){ 
+				distanceC = (data[i].getRssi() + 55)/RATIO;
+				System.out.println(distanceC);
+			} else if (data[i].getMacAsString().equals("F4:CF:E2:2C:0F:20")) {
+				System.out.println(distanceA);
+				distanceA = (data[i].getRssi() + 54)/RATIO;
 			}
 		}
 		return ret;
