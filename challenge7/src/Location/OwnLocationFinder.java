@@ -1,7 +1,12 @@
 package Location;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import Utils.*;
+import java.util.List;
+
+import Utils.MacRssiPair;
+import Utils.Position;
+import Utils.Utils;
 
 /**
  * Simple Location finder that returns the first known APs location from the list of received MAC addresses
@@ -19,7 +24,7 @@ public class OwnLocationFinder implements LocationFinder{
 	@Override
 	public Position locate(MacRssiPair[] data) {
 		printMacs(data); //print all the received data
-		return getFirstKnownFromList(data); //return the first known APs location
+		return getHighestKnownFromList(data); //return the first known APs location
 	}
 	
 	/**
@@ -27,12 +32,12 @@ public class OwnLocationFinder implements LocationFinder{
 	 * @param data
 	 * @return
 	 */
-	private Position getFirstKnownFromList(MacRssiPair[] data){
+	private Position getHighestKnownFromList(MacRssiPair[] data){
 		Position ret = new Position(0,0);
+		int LowestNr = -100;
 		for(int i=0; i<data.length; i++){
-			if(knownLocations.containsKey(data[i].getMacAsString())){
-				ret = knownLocations.get(data[i].getMacAsString());
-				break;
+				if (data[i].getMacAsString().equals("F4:CF:E2:54:E3:30") || data[i].getMacAsString().equals("F4:CF:E2:2C:1B:40") || data[i].getMacAsString().equals("F4:CF:E2:2C:0F:20")) {
+					System.out.println("MAC addr: " + data[i].getMacAsString() + " sterkte: " + data[i].getRssi());
 			}
 		}
 		return ret;
@@ -47,6 +52,16 @@ public class OwnLocationFinder implements LocationFinder{
 		for (MacRssiPair pair : data) {
 			System.out.println(pair);
 		}
+	}
+	
+	
+	public List<Position> makeBoundries(Position p, int distance) {
+		Position upperBoundary = new Position(p.getX(), p.getY() + distance);
+		Position lowerBoundary = new Position(p.getX(), p.getY() - distance);
+		Position rightBoundary = new Position(p.getX() + distance, p.getY());
+		Position leftBoundary = new Position(p.getX() - distance, p.getY());
+		List<Position> boundaries = new ArrayList<Position>();
+		return boundaries;
 	}
 
 }
